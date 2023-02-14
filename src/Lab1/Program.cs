@@ -1,5 +1,9 @@
-﻿using CommandLine;
-using Cryptography.Helpers;
+﻿using System.Linq;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using CommandLine;
+using Cryptography.Wrappers;
+using Cryptography.Native;
 
 namespace Lab1;
 
@@ -32,35 +36,61 @@ class Program
     static void Main(string[] args)
     {
         Parser.Default.ParseArguments<ListOptions>(args)
-            .WithParsed<ListOptions>(
-                o =>
+            .WithParsed<ListOptions>(options => RunList(options));
+    }
+
+    private static void RunList(ListOptions options)
+    {
+        if (!string.IsNullOrWhiteSpace(options.provName))
+        {
+            if (options.provType == 0)
+            {
+                Console.Error.WriteLine("No provider type specified.");
+                Environment.Exit(1);
+            }
+
+            var csps = Methods.CryptEnumProviders();
+
+            var (provType, provName) = csps.FirstOrDefault(
+                csp =>
+                    csp.Item1 == options.provType &&
+                    csp.Item2.Contains(options.provName));
+
+            if ((provType, provName) == default)
+            {
+                Environment.Exit(1);
+            }
+
+            Console.WriteLine($"{provType}\t{provName}\n");
+
+            var algs = Methods.EnumAlgInfos(provType, provName);
+            foreach (var alg in algs)
+            {
+                Console.WriteLine($"{alg.AlgId}\t{alg.BitLen}\t{alg.Name}");
+            }
+            Console.WriteLine("Done!");
+        }
+        else if (options.provType == 0)
+        {
+            var csps = Methods.CryptEnumProviderTypes();
+
+            foreach (var (provType, provName) in csps)
+            {
+                Console.WriteLine($"{provType}\t{provName}");
+            }
+        }
+        else
+        {
+            var csps = Methods.CryptEnumProviders();
+
+            foreach (var (provType, provName) in csps)
+            {
+                if (provType == options.provType)
                 {
-                    if (!string.IsNullOrWhiteSpace(o.provName))
-                    {
-                        // TODO: Print available algorithms.
-                    }
-                    else if (o.provType == 0)
-                    {
-                        var csps = Wrappers.CryptEnumProviderTypes();
-
-                        foreach (var (provType, provName) in csps)
-                        {
-                            Console.WriteLine($"{provType}\t{provName}");
-                        }
-                    }
-                    else
-                    {
-                        var csps = Wrappers.CryptEnumProviders();
-
-                        foreach (var (provType, provName) in csps)
-                        {
-                            if (provType == o.provType)
-                            {
-                                Console.WriteLine($"{provType}\t{provName}");
-                            }
-                        }
-                    }
-                });
+                    Console.WriteLine($"{provType}\t{provName}");
+                }
+            }
+        }
     }
 }
 

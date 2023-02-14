@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace Cryptography.Native;
 
-public static class Methods
+public static class NativeMethods
 {
     private const string Advapi32 = "libcapi10";
     private const string Crypt32 = "libcapi20";
@@ -14,7 +15,7 @@ public static class Methods
     [DllImport(
         Advapi32,
         SetLastError = true,
-        CharSet = CharSet.Unicode,
+        CharSet = CharSet.Ansi,
         EntryPoint = "CryptAcquireContextA")
         ]
     public static extern bool CryptAcquireContext(
@@ -35,7 +36,28 @@ public static class Methods
     [DllImport(
         Advapi32,
         SetLastError = true,
-        CharSet = CharSet.Unicode,
+        EntryPoint = "CryptGetProvParam")]
+    public static extern bool CryptGetProvParam(
+        IntPtr hProv,
+        uint dwParam,
+        byte[]? pbData,
+        ref uint pdwDataLen,
+        uint dwFlags);
+
+    [DllImport(
+        Advapi32,
+        SetLastError = true,
+        EntryPoint = "CryptGetProvParam")]
+    public static extern bool CryptGetProvParam(
+        IntPtr hProv,
+        uint dwParam,
+        IntPtr pbData,
+        ref uint pdwDataLen,
+        uint dwFlags);
+
+    [DllImport(
+        Advapi32,
+        SetLastError = true,
         EntryPoint = "CryptEnumProvidersA")]
     public static extern bool CryptEnumProviders(
         uint dwIndex,
@@ -48,7 +70,6 @@ public static class Methods
     [DllImport(
         Advapi32,
         SetLastError = true,
-        CharSet = CharSet.Unicode,
         EntryPoint = "CryptEnumProviderTypesA")]
     public static extern bool CryptEnumProviderTypes(
         uint dwIndex,
