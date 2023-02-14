@@ -110,7 +110,7 @@ public static class Methods
     /// <param name="provName">Provider name.</param>
     /// <returns>Algorithms enumerator.</returns>
     /// <exception cref="CryptographicException">
-    ///Error occured during native operation.
+    /// Error occured during native operation.
     /// </exception>
     public static IEnumerable<AlgInfo> EnumAlgInfos(
         uint provType,
@@ -208,6 +208,17 @@ public static class Methods
         }
     }
 
+    /// <summary>Create key container.</summary>
+    /// <param name="provType">Provider type.</param>
+    /// <param name="provName">Provider name.</param>
+    /// <param name="containerName">Container name.</param>
+    /// <param name="algId">
+    /// Algorithm identifier. Should be either 1 or 2.
+    /// </param>
+    /// <exception cref="CryptographicException">
+    /// Error occured during native operation
+    /// </exception>
+    /// <remarks>Key is created with EXPORTABLE flag.</remarks>
     public static void CreateKeyContainer(
         uint provType,
         string provName,
@@ -234,8 +245,6 @@ public static class Methods
             var errorCode = NativeMethods.GetLastError();
             throw new CryptographicException(unchecked((int)errorCode));
         }
-
-
 
         if (!NativeMethods.CryptDestroyKey(hKey))
         {
