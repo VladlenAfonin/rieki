@@ -1,9 +1,5 @@
-﻿using System.Linq;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography;
-using CommandLine;
+﻿using CommandLine;
 using Cryptography.Wrappers;
-using Cryptography.Native;
 
 namespace Lab1;
 
@@ -68,7 +64,6 @@ class Program
             {
                 Console.WriteLine($"{alg.AlgId}\t{alg.BitLen}\t{alg.Name}");
             }
-            Console.WriteLine("Done!");
         }
         else if (options.provType == 0)
         {
@@ -93,4 +88,3 @@ class Program
         }
     }
 }
-

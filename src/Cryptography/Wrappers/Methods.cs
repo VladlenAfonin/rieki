@@ -167,9 +167,40 @@ public static class Methods
 
         yield return algInfo;
 
-        Console.WriteLine("Hello from  enumerator!");
+        while (NativeMethods.CryptGetProvParam(
+            hProv,
+            NativeConstants.PP_ENUMALGS,
+            null,
+            ref algInfoSize,
+            NativeConstants.CRYPT_NEXT))
+        {
+            algInfoPtr = Marshal.AllocHGlobal((int)algInfoSize);
 
-        // Will this code ever execute?
+            if (!NativeMethods.CryptGetProvParam(
+                hProv,
+                NativeConstants.PP_ENUMALGS,
+                algInfoPtr,
+                ref algInfoSize,
+                NativeConstants.CRYPT_NEXT))
+            {
+                var errorCode = NativeMethods.GetLastError();
+                throw new CryptographicException(unchecked((int)errorCode));
+            }
+
+            algInfoStruct = Marshal.PtrToStructure<PROV_ENUMALGS>(algInfoPtr);
+
+            algInfo = new AlgInfo
+            {
+                AlgId = algInfoStruct.aiAlgid,
+                BitLen = algInfoStruct.dwBitLen,
+                Name = algInfoStruct.szName,
+            };
+
+            Marshal.FreeHGlobal(algInfoPtr);
+
+            yield return algInfo;
+        }
+
         if (!NativeMethods.CryptReleaseContext(hProv, 0))
         {
             var errorCode = NativeMethods.GetLastError();
