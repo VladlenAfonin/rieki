@@ -79,6 +79,32 @@ public static class NativeMethods
         byte[]? szProvName,
         ref uint pcbProvName);
 
+    [DllImport(
+        Advapi32,
+        SetLastError = true,
+        EntryPoint = "CryptGetUserKey")]
+    public static extern bool CryptGetUserKey(
+        IntPtr hProv,
+        uint dwKeySpec,
+        out IntPtr phUserKey);
+
+    [DllImport(
+        Advapi32,
+        SetLastError = true,
+        EntryPoint = "CryptGenKey")]
+    public static extern bool CryptGenKey(
+        IntPtr hProv,
+        uint Algid,
+        uint dwFlags,
+        out IntPtr phKey);
+
+    [DllImport(
+       Advapi32,
+       SetLastError = true,
+       EntryPoint = "CryptDestroyKey")]
+    public static extern bool CryptDestroyKey(
+        IntPtr hKey);
+
     #endregion Advapi32
 
     #region Kernel32

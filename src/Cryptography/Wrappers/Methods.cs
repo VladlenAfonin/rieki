@@ -207,4 +207,46 @@ public static class Methods
             throw new CryptographicException(unchecked((int)errorCode));
         }
     }
+
+    public static void CreateKeyContainer(
+        uint provType,
+        string provName,
+        string containerName,
+        uint algId)
+    {
+        if (!NativeMethods.CryptAcquireContext(
+            out var hProv,
+            containerName,
+            provName,
+            provType,
+            NativeConstants.CRYPT_NEWKEYSET))
+        {
+            var errorCode = NativeMethods.GetLastError();
+            throw new CryptographicException(unchecked((int)errorCode));
+        }
+
+        if (!NativeMethods.CryptGenKey(
+            hProv,
+            algId,
+            NativeConstants.CRYPT_EXPORTABLE,
+            out var hKey))
+        {
+            var errorCode = NativeMethods.GetLastError();
+            throw new CryptographicException(unchecked((int)errorCode));
+        }
+
+
+
+        if (!NativeMethods.CryptDestroyKey(hKey))
+        {
+            var errorCode = NativeMethods.GetLastError();
+            throw new CryptographicException(unchecked((int)errorCode));
+        }
+
+        if (!NativeMethods.CryptReleaseContext(hProv, 0))
+        {
+            var errorCode = NativeMethods.GetLastError();
+            throw new CryptographicException(unchecked((int)errorCode));
+        }
+    }
 }
