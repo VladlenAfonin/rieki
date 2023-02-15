@@ -272,6 +272,13 @@ public static class Methods
         }
     }
 
+    /// <summary>Destroy key container.</summary>
+    /// <param name="provType">Provider type.</param>
+    /// <param name="provName">Provider name.</param>
+    /// <param name="containerName">Container name.</param>
+    /// <exception cref="InvalidOperationException">
+    /// Error occured during native operation
+    /// </exception>
     public static void DestroyKeyContainer(
         uint provType,
         string provName,
