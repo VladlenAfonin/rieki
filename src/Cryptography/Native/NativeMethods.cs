@@ -14,8 +14,7 @@ public static class NativeMethods
         Advapi32,
         SetLastError = true,
         CharSet = CharSet.Ansi,
-        EntryPoint = "CryptAcquireContextA")
-        ]
+        EntryPoint = "CryptAcquireContextA")]
     public static extern bool CryptAcquireContext(
         out IntPtr hProv,
         string? pszContainer,
