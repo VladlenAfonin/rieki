@@ -31,8 +31,7 @@ class Program
 
     [Verb(
         "create",
-        HelpText = "List elements. By default lists available cryptographic " +
-            "service provider types.")]
+        HelpText = "Create key container.")]
     public class CreateOptions
     {
         [Option(
@@ -69,11 +68,42 @@ class Program
         public uint AlgId { get; set; }
     }
 
+    [Verb(
+        "destroy",
+        HelpText = "Destroy key container.")]
+    public class DestroyOptions
+    {
+        [Option(
+            't',
+            "type",
+            Default = (uint)0,
+            Required = true,
+            HelpText = "Cryptographic service providers type.")]
+        public uint ProvType { get; set; }
+
+        [Option(
+            'n',
+            "name",
+            Default = null,
+            Required = true,
+            HelpText = "Cryptographic service provider name.")]
+        public string? ProvName { get; set; }
+
+        [Option(
+            'c',
+            "container-name",
+            Default = null,
+            Required = true,
+            HelpText = "Key container name.")]
+        public string? ContainerName { get; set; }
+    }
+
     static void Main(string[] args)
     {
-        Parser.Default.ParseArguments<ListOptions, CreateOptions>(args)
+        Parser.Default.ParseArguments<ListOptions, CreateOptions, DestroyOptions>(args)
             .WithParsed<ListOptions>(options => RunList(options))
-            .WithParsed<CreateOptions>(options => RunCreate(options));
+            .WithParsed<CreateOptions>(options => RunCreate(options))
+            .WithParsed<DestroyOptions>(options => RunDestroy(options));
     }
 
     private static void RunList(ListOptions options)
@@ -150,5 +180,27 @@ class Program
             options.AlgId);
 
         Console.WriteLine("Key container created.");
+    }
+
+    private static void RunDestroy(DestroyOptions options)
+    {
+        var csps = Methods.CryptEnumProviders();
+
+        var (provType, provName) = csps.FirstOrDefault(
+                csp =>
+                    csp.Item1 == options.ProvType &&
+                    csp.Item2.Contains(options.ProvName!));
+
+        if ((provType, provName) == default)
+        {
+            Environment.Exit(1);
+        }
+
+        Methods.DestroyKeyContainer(
+            provType,
+            provName,
+            options.ContainerName!);
+
+        Console.WriteLine("Key container destroyed.");
     }
 }

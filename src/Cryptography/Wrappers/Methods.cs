@@ -10,7 +10,7 @@ public static class Methods
 {
     /// <summary>Enumerate cryptographic service providers available.</summary>
     /// <returns>List of tuples (provType, provName).</returns>
-    /// <exception cref="CryptographicException">
+    /// <exception cref="InvalidOperationException">
     /// Error occured during native operation.
     /// </exception>
     public static IEnumerable<(uint, string)> CryptEnumProviders()
@@ -31,7 +31,8 @@ public static class Methods
             errorCode = NativeMethods.GetLastError();
             if (errorCode != 0)
             {
-                throw new CryptographicException(unchecked((int)errorCode));
+                throw new InvalidOperationException(
+                    $"0x{unchecked((int)errorCode):x}");
             }
 
             encodedProvName = new byte[encodedProvNameSize];
@@ -45,7 +46,8 @@ public static class Methods
                 ref encodedProvNameSize))
             {
                 errorCode = NativeMethods.GetLastError();
-                throw new CryptographicException(unchecked((int)errorCode));
+                throw new InvalidOperationException(
+                    $"0x{unchecked((int)errorCode):x}");
             }
 
             var provName = Encoding.ASCII.GetString(encodedProvName);
@@ -59,7 +61,7 @@ public static class Methods
     /// providers available.
     /// </summary>
     /// <returns>Dictionary (provType -> provName).</returns>
-    /// <exception cref="CryptographicException">
+    /// <exception cref="InvalidOperationException">
     /// Error occured during native operation.
     /// </exception>
     public static IEnumerable<(uint, string)> CryptEnumProviderTypes()
@@ -82,7 +84,8 @@ public static class Methods
             errorCode = NativeMethods.GetLastError();
             if (errorCode != 0)
             {
-                throw new CryptographicException(unchecked((int)errorCode));
+                throw new InvalidOperationException(
+                    $"0x{unchecked((int)errorCode):x}");
             }
 
             encodedProvName = new byte[encodedProvNameSize];
@@ -96,7 +99,8 @@ public static class Methods
                 ref encodedProvNameSize))
             {
                 errorCode = NativeMethods.GetLastError();
-                throw new CryptographicException(unchecked((int)errorCode));
+                throw new InvalidOperationException(
+                    $"0x{unchecked((int)errorCode):x}");
             }
 
             var provName = Encoding.ASCII.GetString(encodedProvName);
@@ -109,7 +113,7 @@ public static class Methods
     /// <param name="provType">Provider type.</param>
     /// <param name="provName">Provider name.</param>
     /// <returns>Algorithms enumerator.</returns>
-    /// <exception cref="CryptographicException">
+    /// <exception cref="InvalidOperationException">
     /// Error occured during native operation.
     /// </exception>
     public static IEnumerable<AlgInfo> EnumAlgInfos(
@@ -124,7 +128,8 @@ public static class Methods
             NativeConstants.CRYPT_VERIFYCONTEXT))
         {
             var errorCode = NativeMethods.GetLastError();
-            throw new CryptographicException(unchecked((int)errorCode));
+            throw new InvalidOperationException(
+                $"0x{unchecked((int)errorCode):x}");
         }
 
         var algInfoSize = 0u;
@@ -138,7 +143,8 @@ public static class Methods
             NativeConstants.CRYPT_FIRST))
         {
             var errorCode = NativeMethods.GetLastError();
-            throw new CryptographicException(unchecked((int)errorCode));
+            throw new InvalidOperationException(
+                $"0x{unchecked((int)errorCode):x}");
         }
 
         algInfoPtr = Marshal.AllocHGlobal((int)algInfoSize);
@@ -151,7 +157,8 @@ public static class Methods
             NativeConstants.CRYPT_FIRST))
         {
             var errorCode = NativeMethods.GetLastError();
-            throw new CryptographicException(unchecked((int)errorCode));
+            throw new InvalidOperationException(
+                $"0x{unchecked((int)errorCode):x}");
         }
 
         var algInfoStruct = Marshal.PtrToStructure<PROV_ENUMALGS>(algInfoPtr);
@@ -184,7 +191,8 @@ public static class Methods
                 NativeConstants.CRYPT_NEXT))
             {
                 var errorCode = NativeMethods.GetLastError();
-                throw new CryptographicException(unchecked((int)errorCode));
+                throw new InvalidOperationException(
+                    $"0x{unchecked((int)errorCode):x}");
             }
 
             algInfoStruct = Marshal.PtrToStructure<PROV_ENUMALGS>(algInfoPtr);
@@ -204,7 +212,8 @@ public static class Methods
         if (!NativeMethods.CryptReleaseContext(hProv, 0))
         {
             var errorCode = NativeMethods.GetLastError();
-            throw new CryptographicException(unchecked((int)errorCode));
+            throw new InvalidOperationException(
+                $"0x{unchecked((int)errorCode):x}");
         }
     }
 
@@ -215,7 +224,7 @@ public static class Methods
     /// <param name="algId">
     /// Algorithm identifier. Should be either 1 or 2.
     /// </param>
-    /// <exception cref="CryptographicException">
+    /// <exception cref="InvalidOperationException">
     /// Error occured during native operation
     /// </exception>
     /// <remarks>Key is created with EXPORTABLE flag.</remarks>
@@ -233,7 +242,8 @@ public static class Methods
             NativeConstants.CRYPT_NEWKEYSET))
         {
             var errorCode = NativeMethods.GetLastError();
-            throw new CryptographicException(unchecked((int)errorCode));
+            throw new InvalidOperationException(
+                $"0x{unchecked((int)errorCode):x}");
         }
 
         if (!NativeMethods.CryptGenKey(
@@ -243,19 +253,40 @@ public static class Methods
             out var hKey))
         {
             var errorCode = NativeMethods.GetLastError();
-            throw new CryptographicException(unchecked((int)errorCode));
+            throw new InvalidOperationException(
+                $"0x{unchecked((int)errorCode):x}");
         }
 
         if (!NativeMethods.CryptDestroyKey(hKey))
         {
             var errorCode = NativeMethods.GetLastError();
-            throw new CryptographicException(unchecked((int)errorCode));
+            throw new InvalidOperationException(
+                $"0x{unchecked((int)errorCode):x}");
         }
 
         if (!NativeMethods.CryptReleaseContext(hProv, 0))
         {
             var errorCode = NativeMethods.GetLastError();
-            throw new CryptographicException(unchecked((int)errorCode));
+            throw new InvalidOperationException(
+                $"0x{unchecked((int)errorCode):x}");
+        }
+    }
+
+    public static void DestroyKeyContainer(
+        uint provType,
+        string provName,
+        string containerName)
+    {
+        if (!NativeMethods.CryptAcquireContext(
+            out var _,
+            containerName,
+            provName,
+            provType,
+            NativeConstants.CRYPT_DELETEKEYSET))
+        {
+            var errorCode = NativeMethods.GetLastError();
+            throw new InvalidOperationException(
+                $"0x{unchecked((int)errorCode):x}");
         }
     }
 }
