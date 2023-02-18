@@ -3,12 +3,12 @@
 namespace Cryptography.Native;
 
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-public struct PROV_ENUMALGS
+internal struct PROV_ENUMALGS
 {
-    public uint aiAlgid;
-    public uint dwBitLen;
-    public uint dwNameLen;
+    internal uint aiAlgid;
+    internal uint dwBitLen;
+    internal uint dwNameLen;
 
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 20)]
-    public string szName;
+    internal string szName;
 }

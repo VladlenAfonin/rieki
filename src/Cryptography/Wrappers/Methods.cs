@@ -137,7 +137,7 @@ public static class Methods
         if (!NativeMethods.CryptGetProvParam(
             hProv,
             NativeConstants.PP_ENUMALGS,
-            null,
+            IntPtr.Zero,
             ref algInfoSize,
             NativeConstants.CRYPT_FIRST))
         {
@@ -176,7 +176,7 @@ public static class Methods
         while (NativeMethods.CryptGetProvParam(
             hProv,
             NativeConstants.PP_ENUMALGS,
-            null,
+            IntPtr.Zero,
             ref algInfoSize,
             NativeConstants.CRYPT_NEXT))
         {

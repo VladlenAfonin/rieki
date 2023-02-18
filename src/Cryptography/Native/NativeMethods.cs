@@ -2,7 +2,7 @@
 
 namespace Cryptography.Native;
 
-public static class NativeMethods
+internal static class NativeMethods
 {
     private const string Advapi32 = "libcapi10";
     private const string Crypt32 = "libcapi20";
@@ -15,7 +15,7 @@ public static class NativeMethods
         SetLastError = true,
         CharSet = CharSet.Ansi,
         EntryPoint = "CryptAcquireContextA")]
-    public static extern bool CryptAcquireContext(
+    internal static extern bool CryptAcquireContext(
         out IntPtr hProv,
         string? pszContainer,
         string? pszProvider,
@@ -26,7 +26,7 @@ public static class NativeMethods
         Advapi32,
         SetLastError = true,
         EntryPoint = "CryptReleaseContext")]
-    public static extern bool CryptReleaseContext(
+    internal static extern bool CryptReleaseContext(
         IntPtr hProv,
         uint dwFlags);
 
@@ -34,18 +34,7 @@ public static class NativeMethods
         Advapi32,
         SetLastError = true,
         EntryPoint = "CryptGetProvParam")]
-    public static extern bool CryptGetProvParam(
-        IntPtr hProv,
-        uint dwParam,
-        byte[]? pbData,
-        ref uint pdwDataLen,
-        uint dwFlags);
-
-    [DllImport(
-        Advapi32,
-        SetLastError = true,
-        EntryPoint = "CryptGetProvParam")]
-    public static extern bool CryptGetProvParam(
+    internal static extern bool CryptGetProvParam(
         IntPtr hProv,
         uint dwParam,
         IntPtr pbData,
@@ -56,7 +45,7 @@ public static class NativeMethods
         Advapi32,
         SetLastError = true,
         EntryPoint = "CryptEnumProvidersA")]
-    public static extern bool CryptEnumProviders(
+    internal static extern bool CryptEnumProviders(
         uint dwIndex,
         IntPtr pdwReserved,
         uint dwFlags,
@@ -68,7 +57,7 @@ public static class NativeMethods
         Advapi32,
         SetLastError = true,
         EntryPoint = "CryptEnumProviderTypesA")]
-    public static extern bool CryptEnumProviderTypes(
+    internal static extern bool CryptEnumProviderTypes(
         uint dwIndex,
         IntPtr pdwReserved,
         uint dwFlags,
@@ -80,7 +69,7 @@ public static class NativeMethods
         Advapi32,
         SetLastError = true,
         EntryPoint = "CryptGetUserKey")]
-    public static extern bool CryptGetUserKey(
+    internal static extern bool CryptGetUserKey(
         IntPtr hProv,
         uint dwKeySpec,
         out IntPtr phUserKey);
@@ -89,7 +78,7 @@ public static class NativeMethods
         Advapi32,
         SetLastError = true,
         EntryPoint = "CryptGenKey")]
-    public static extern bool CryptGenKey(
+    internal static extern bool CryptGenKey(
         IntPtr hProv,
         uint Algid,
         uint dwFlags,
@@ -99,7 +88,7 @@ public static class NativeMethods
        Advapi32,
        SetLastError = true,
        EntryPoint = "CryptDestroyKey")]
-    public static extern bool CryptDestroyKey(
+    internal static extern bool CryptDestroyKey(
         IntPtr hKey);
 
     #endregion Advapi32
@@ -109,7 +98,7 @@ public static class NativeMethods
     [DllImport(
         Kernel32,
         EntryPoint = "GetLastError")]
-    public static extern uint GetLastError();
+    internal static extern uint GetLastError();
 
     #endregion Kernel32
 }
