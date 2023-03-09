@@ -10,10 +10,13 @@
     <None Remove="Native\" />
     <None Remove="Models\" />
     <None Remove="Helpers\" />
+    <None Remove="Models\Exceptions\" />
+    <None Remove="Models\Handles\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Native\" />
     <Folder Include="Models\" />
-    <Folder Include="Wrappers\" />
+    <Folder Include="Models\Exceptions\" />
+    <Folder Include="Models\Handles\" />
   </ItemGroup>
 </Project>

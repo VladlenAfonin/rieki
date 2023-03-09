@@ -1,5 +1,7 @@
 ﻿using CommandLine;
-using Cryptography.Wrappers;
+using Cryptography;
+using Cryptography.Models;
+using Cryptography.Native;
 
 namespace Lab1;
 
@@ -116,29 +118,18 @@ class Program
                 Environment.Exit(1);
             }
 
-            var csps = Methods.CryptEnumProviders();
+            using var csp = new Csp(options.ProvType, options.ProvName);
 
-            var (provType, provName) = csps.FirstOrDefault(
-                csp =>
-                    csp.Item1 == options.ProvType &&
-                    csp.Item2.Contains(options.ProvName));
+            Console.WriteLine($"{options.ProvType}\t{csp.Name}\n");
 
-            if ((provType, provName) == default)
-            {
-                Environment.Exit(1);
-            }
-
-            Console.WriteLine($"{provType}\t{provName}\n");
-
-            var algs = Methods.EnumAlgInfos(provType, provName);
-            foreach (var alg in algs)
+            foreach (var alg in csp.Algorithms)
             {
                 Console.WriteLine($"{alg.AlgId}\t{alg.BitLen}\t{alg.Name}");
             }
         }
         else if (options.ProvType == 0)
         {
-            var csps = Methods.CryptEnumProviderTypes();
+            var csps = Utilities.CryptEnumProviderTypes();
 
             foreach (var (provType, provName) in csps)
             {
@@ -147,7 +138,7 @@ class Program
         }
         else
         {
-            var csps = Methods.CryptEnumProviders();
+            var csps = Utilities.CryptEnumProviders();
 
             foreach (var (provType, provName) in csps)
             {
@@ -161,45 +152,25 @@ class Program
 
     private static void RunCreate(CreateOptions options)
     {
-        var csps = Methods.CryptEnumProviders();
+        using var csp = new Csp(
+            provType: options.ProvType,
+            provNameLike: options.ProvName!,
+            containerName: options.ContainerName!,
+            flags: NativeConstants.CRYPT_NEWKEYSET);
 
-        var (provType, provName) = csps.FirstOrDefault(
-                csp =>
-                    csp.Item1 == options.ProvType &&
-                    csp.Item2.Contains(options.ProvName!));
-
-        if ((provType, provName) == default)
-        {
-            Environment.Exit(1);
-        }
-
-        Methods.CreateKeyContainer(
-            provType,
-            provName,
-            options.ContainerName!,
-            options.AlgId);
+        csp.GenerateKey(options.AlgId);
 
         Console.WriteLine("Key container created.");
     }
 
     private static void RunDestroy(DestroyOptions options)
     {
-        var csps = Methods.CryptEnumProviders();
+        using var csp = new Csp(
+            provType: options.ProvType,
+            provNameLike: options.ProvName!,
+            containerName: options.ContainerName!);
 
-        var (provType, provName) = csps.FirstOrDefault(
-                csp =>
-                    csp.Item1 == options.ProvType &&
-                    csp.Item2.Contains(options.ProvName!));
-
-        if ((provType, provName) == default)
-        {
-            Environment.Exit(1);
-        }
-
-        Methods.DestroyKeyContainer(
-            provType,
-            provName,
-            options.ContainerName!);
+        csp.DestroyKeyContainer();
 
         Console.WriteLine("Key container destroyed.");
     }

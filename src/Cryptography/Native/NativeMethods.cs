@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using Cryptography.Models.Handles;
 
 namespace Cryptography.Native;
 
@@ -16,7 +17,7 @@ internal static class NativeMethods
         CharSet = CharSet.Ansi,
         EntryPoint = "CryptAcquireContextA")]
     internal static extern bool CryptAcquireContext(
-        out IntPtr hProv,
+        out CspSafeHandle hProv,
         string? pszContainer,
         string? pszProvider,
         uint dwProvType,
@@ -35,7 +36,7 @@ internal static class NativeMethods
         SetLastError = true,
         EntryPoint = "CryptGetProvParam")]
     internal static extern bool CryptGetProvParam(
-        IntPtr hProv,
+        CspSafeHandle hProv,
         uint dwParam,
         IntPtr pbData,
         ref uint pdwDataLen,
@@ -70,7 +71,7 @@ internal static class NativeMethods
         SetLastError = true,
         EntryPoint = "CryptGetUserKey")]
     internal static extern bool CryptGetUserKey(
-        IntPtr hProv,
+        CspSafeHandle hProv,
         uint dwKeySpec,
         out IntPtr phUserKey);
 
@@ -79,7 +80,7 @@ internal static class NativeMethods
         SetLastError = true,
         EntryPoint = "CryptGenKey")]
     internal static extern bool CryptGenKey(
-        IntPtr hProv,
+        CspSafeHandle hProv,
         uint Algid,
         uint dwFlags,
         out IntPtr phKey);
