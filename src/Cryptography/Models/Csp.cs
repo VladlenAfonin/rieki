@@ -1,5 +1,4 @@
 ﻿using System.Runtime.InteropServices;
-using Cryptography;
 using Cryptography.Models.Exceptions;
 using Cryptography.Models.Handles;
 using Cryptography.Native;
@@ -119,9 +118,6 @@ public sealed class Csp : IDisposable
     }
 
     /// <summary>Destroy key container.</summary>
-    /// <param name="provType">Provider type.</param>
-    /// <param name="provName">Provider name.</param>
-    /// <param name="containerName">Container name.</param>
     /// <exception cref="InvalidOperationException">
     /// Error occured during native operation
     /// </exception>
@@ -201,7 +197,7 @@ public sealed class Csp : IDisposable
         var cspInfoFound = csps.FirstOrDefault(
             csp =>
                 csp.ProvType == provType &&
-                (csp.ProvName!.Contains(provName)));
+                csp.ProvName!.Contains(provName));
 
         if (cspInfoFound is null)
         {
