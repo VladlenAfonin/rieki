@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lab1", "src\Lab1\Lab1.cspro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cryptography", "src\Cryptography\Cryptography.csproj", "{D07FBD8C-7C0A-4115-93F6-FAC95DE69FA9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lab2", "src\Lab2\Lab2.csproj", "{86CCE134-78EC-4DB7-B7AD-5B6260F89177}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lab2b", "src\Lab2b\Lab2b.csproj", "{86CCE134-78EC-4DB7-B7AD-5B6260F89177}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
